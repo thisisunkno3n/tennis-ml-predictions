@@ -1,2 +1,8 @@
 # Add your ML dependencies here as needed
 
+pandas
+numpy
+scikit-learn
+lightgbm
+xgboost
+jupyter
