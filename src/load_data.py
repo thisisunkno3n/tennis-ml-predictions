@@ -68,6 +68,39 @@ def _clean_matches(df: pd.DataFrame) -> pd.DataFrame:
     df = df.reset_index(drop=True)   #resets the index to 0, 1, 2, ... after filtering
     return df    #returns the cleaned dataframe
 
+def load_and_clean_matches() -> pd.DataFrame:
+    # Load all raw match files, clean them, and concatenate into a single dataframe
+    files = _list_files()
+    clean_dfs = []
+    for file in files:
+        print(f"Loading and cleaning {file}")
+        df_raw = pd.read_csv(file)
+        df_clean = _clean_matches(df_raw)
+        clean_dfs.append(df_clean)
+
+    df_all = pd.concat(clean_dfs, ignore_index=True)
+    print(f"Total Cleaned rows in all years: {len(df_all)}")
+    return df_all
+
+def save_clean_matches(df: pd.DataFrame) -> str:
+    # Save the cleaned matches dataframe to a CSV file
+    os.makedirs(DATA_PROCESSED_DIR, exist_ok=True)
+    output_path = os.path.join(DATA_PROCESSED_DIR, CLEAN_MATCHES_FILENAME)
+    df.to_csv(output_path, index=False)
+    print(f"Saved cleaned matches to {output_path}")
+    return output_path
+
+def run_cleaning_pipeline() -> pd.DataFrame:
+    # Run the cleaning pipeline and return the cleaned dataframe
+    df = load_and_clean_matches()
+    save_clean_matches(df)
+    return df
+
+if __name__ == "__main__":
+    run_cleaning_pipeline()
+
+
+
 #------------------------------ Testing Loading Files --------------------------------
 #test 1: list files
 # files = _list_files()
@@ -76,20 +109,20 @@ def _clean_matches(df: pd.DataFrame) -> pd.DataFrame:
 
 
 #------------------------------ Testing Davis Cup Removal --------------------------------
-if __name__ == "__main__":
-    # Test with one file
-    test_file = "data/raw/atp_matches_2013.csv"
-    df_raw = pd.read_csv(test_file)
-    print(f"Original rows: {len(df_raw)}")
+# if __name__ == "__main__":
+#     # Test with one file
+#     test_file = "data/raw/atp_matches_2013.csv"
+#     df_raw = pd.read_csv(test_file)
+#     print(f"Original rows: {len(df_raw)}")
     
-    # Check Davis Cup before
-    davis_cup_count = len(df_raw[df_raw["tourney_level"] == "D"])
-    print(f"Davis Cup matches before: {davis_cup_count}")
+#     # Check Davis Cup before
+#     davis_cup_count = len(df_raw[df_raw["tourney_level"] == "D"])
+#     print(f"Davis Cup matches before: {davis_cup_count}")
     
-    # Clean it
-    df_clean = _clean_matches(df_raw)
+#     # Clean it
+#     df_clean = _clean_matches(df_raw)
     
-    # Verify Davis Cup removed
-    davis_cup_after = len(df_clean[df_clean["tourney_level"] == "D"])
-    print(f"Davis Cup matches after: {davis_cup_after}")
-    print(f"Final rows: {len(df_clean)}")
+#     # Verify Davis Cup removed
+#     davis_cup_after = len(df_clean[df_clean["tourney_level"] == "D"])
+#     print(f"Davis Cup matches after: {davis_cup_after}")
+#     print(f"Final rows: {len(df_clean)}")
