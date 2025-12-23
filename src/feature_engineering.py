@@ -24,7 +24,7 @@ IDENTITY_COLUMNS = [
     "player_ioc",  # Country code
     "opponent_id",
     "opponent_name",
-    "opponent_ioc",  # Country code
+    "opponent_ioc",  
     "tourney_id",
     "tourney_name",
 ]
@@ -132,9 +132,27 @@ def _extract_date_features(df: pd.DataFrame) -> pd.DataFrame:
         # Optional: add season features later (is_clay_season, etc.)
     return df
 
+def _encode_hand_matchup(df: pd.DataFrame) -> pd.DataFrame:
+    """ Encode hand matchups. Since we use player view, 'player' is always the person we're predicting for. The model will learn interactions automatically. """
+    df['player_is_left'] = (df['player_hand'] == 'L').astype(int)
+    df['opponent_is_left'] = (df['opponent_hand'] == 'L').astype(int)
+    
+    df = df.drop(columns=['player_hand', 'opponent_hand'])
+    return df
+
+def _encode_round(df: pd.DataFrame) -> pd.DataFrame:
+    """Encode round as 'rounds_remaining' - number of rounds until final."""
+    round_to_remaining = {
+        'R128': 7, 'R64': 6, 'R32': 5, 'R16': 4, 
+        'QF': 3, 'SF': 2, 'F': 1, 'RR': 0
+    }
+    df['rounds_remaining'] = df['round'].map(round_to_remaining).fillna(0)
+    df = df.drop(columns=['round'])
+    return df
+
 def _one_hot_encode(df: pd.DataFrame) -> pd.DataFrame:
     
-    categorical_cols = ["surface", "tourney_level"]  # "round" optional per spec
+    categorical_cols = ["surface", "tourney_level"]
     for col in categorical_cols:
         if col in df.columns:
             dummies = pd.get_dummies(df[col], prefix=col, drop_first=True)
@@ -158,9 +176,11 @@ def build_tabular_dataset(df: pd.DataFrame) -> pd.DataFrame:
     df = df.copy()
     df = _extract_date_features(df)
     df = _add_basic_features(df)
+    df = _encode_hand_matchup(df)
+    df = _encode_round(df) 
     df = _one_hot_encode(df)
     df = _remove_identity_features(df)
-    return df
+    return df 
 
 def _split_by_year(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     train = df[df["year"].isin(TRAIN_YEARS)]
@@ -198,9 +218,3 @@ if __name__ == "__main__":
     print(f"\nTabular dataset:")
     print(f"Train rows: {len(train)}, Val rows: {len(val)}, Test rows: {len(test)}")
     print(f"Tabular features: {len(train.columns)} columns")
-    
-    # Text pipeline moved to feature_engineering_text.py
-    # from src.feature_engineering_text import run_feature_engineering_for_text
-    # train_text, val_text, test_text = run_feature_engineering_for_text()
-    # print(f"\nText dataset:")
-    # print(f"Train rows: {len(train_text)}, Val rows: {len(val_text)}, Test rows: {len(test_text)}")

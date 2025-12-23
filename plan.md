@@ -46,11 +46,14 @@ Feature engineering:
     - if a specific tournament (e.g., "Wimbledon") has certain characteristics, those should be captured by tourney_level and surface, not the tournament name
     - prevents overfitting to specific tournaments that may not exist in validation/test sets
 
+- Turn Players hands into binarys (similar to one-hot encode but create more columns): this ensures Left vs Right favourable is also visible
+
 - One-hot encode the following:
     - Surface: encoded as surface_Grass, surface_Hard (Clay is the base/dropped category)
     - Tournament level: encoded as tourney_level_F, tourney_level_G, tourney_level_M, tourney_level_O (one category dropped to avoid multicollinearity)
-    - Note: round and player_hand/opponent_hand are currently NOT encoded (still categorical strings) and need encoding before model training
+    - Round: turn into round_to_remaining. There's no need to normalize based on tournament level because tree-based models will usually learn interactions automatically
 
 - Time-based train/val/test split: split by year (2013-2019 train, 2020-2021 val, 2022-2024 test) to ensure temporal generalization. Year is used for splitting but not as a model feature.
 
-Model outcome: percentage in the form of a decimal, where 1.0 means the player will win 100%
+
+Desired model outcome: percentage in the form of a decimal, where 1.0 means the player will win 100%
