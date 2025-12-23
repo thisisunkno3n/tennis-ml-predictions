@@ -22,11 +22,12 @@ from src.config import (
 IDENTITY_COLUMNS = [
     "player_id",
     "player_name",
+    "player_ioc",  # Country code
     "opponent_id",
     "opponent_name",
+    "opponent_ioc",  # Country code
     "tourney_id",
     "tourney_name",
-    # "tourney_date" - drop after extracting date features
 ]
 
 def _load_clean_matches() -> pd.DataFrame:
@@ -144,10 +145,7 @@ def _one_hot_encode(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 def _remove_identity_features(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Remove columns that leak identity/metadata and encourage memorization
-    instead of generalization. This is only for the tabular model input.
-    """
+    """ Remove columns that leak identity/metadata and encourage memorization instead of generalization. This is only for the tabular model input."""
     cols_to_drop = [c for c in IDENTITY_COLUMNS if c in df.columns]
     
     # Also drop tourney_date if date features already extracted
@@ -157,24 +155,12 @@ def _remove_identity_features(df: pd.DataFrame) -> pd.DataFrame:
     return df.drop(columns=cols_to_drop)
 
 def build_tabular_dataset(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Build dataset for tabular models (LightGBM/XGBoost).
-    Removes identity features to ensure generalization.
-    """
+    """ Build dataset for tabular models (LightGBM/XGBoost). Removes identity features to ensure generalization. """
     df = df.copy()
-    
-    # 1. Extract date features first (before dropping tourney_date)
     df = _extract_date_features(df)
-    
-    # 2. Add basic features (rank_diff, age_diff, etc.)
     df = _add_basic_features(df)
-    
-    # 3. One-hot encode categoricals
     df = _one_hot_encode(df)
-    
-    # 4. Remove identity features (after extracting what we need)
     df = _remove_identity_features(df)
-    
     return df
 
 def _split_by_year(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
