@@ -177,25 +177,6 @@ def build_tabular_dataset(df: pd.DataFrame) -> pd.DataFrame:
     
     return df
 
-def build_text_dataset(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Build dataset for DeBERTa text model.
-    Keeps identity features (names, tournament info) for text serialization.
-    """
-    df = df.copy()
-    
-    # Extract date features (but keep tourney_date for text)
-    df = _extract_date_features(df)
-    
-    # Add basic features
-    df = _add_basic_features(df)
-    
-    # Keep all identity features for text generation
-    # Don't call _remove_identity_features() here
-    # Don't one-hot encode (text model will handle it in the prompt)
-    
-    return df
-
 def _split_by_year(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     train = df[df["year"].isin(TRAIN_YEARS)]
     val = df[df["year"].isin(VAL_YEARS)]
@@ -226,25 +207,6 @@ def run_feature_engineering() -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]
     
     return train, val, test
 
-def run_feature_engineering_for_text() -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
-    """Pipeline for DeBERTa text model (keeps identity features)."""
-    df = _load_clean_matches()
-    df = _build_player_view(df)
-    
-    # Build text dataset (keeps identity)
-    df_text = build_text_dataset(df)
-    
-    # Split (same time-based split)
-    train, val, test = _split_by_year(df_text)
-    
-    # Save with different filenames to distinguish
-    save_to_csv(train, "train_text.csv")
-    save_to_csv(val, "val_text.csv")
-    save_to_csv(test, "test_text.csv")
-    print(f"Saved text splits: train={len(train)}, val={len(val)}, test={len(test)}")
-    
-    return train, val, test
-
 if __name__ == "__main__":
     # Run tabular pipeline
     train, val, test = run_feature_engineering()
@@ -252,7 +214,8 @@ if __name__ == "__main__":
     print(f"Train rows: {len(train)}, Val rows: {len(val)}, Test rows: {len(test)}")
     print(f"Tabular features: {len(train.columns)} columns")
     
-    # Optionally run text pipeline (uncomment when ready)
+    # Text pipeline moved to feature_engineering_text.py
+    # from src.feature_engineering_text import run_feature_engineering_for_text
     # train_text, val_text, test_text = run_feature_engineering_for_text()
     # print(f"\nText dataset:")
     # print(f"Train rows: {len(train_text)}, Val rows: {len(val_text)}, Test rows: {len(test_text)}")
