@@ -1,4 +1,4 @@
-# Add your ML dependencies here as needed
+# ML dependencies
 
 pandas
 numpy

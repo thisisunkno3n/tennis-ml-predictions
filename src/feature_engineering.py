@@ -10,10 +10,9 @@ import pandas as pd
 import os
 import numpy as np
 from typing import List
-from src.config import DATA_PROCESSED_DIR
-from src.config import (
+from config import (
+    DATA_PROCESSED_DIR,
     CLEAN_MATCHES_FILENAME,
-    PLAYER_VIEW_FILENAME,
     TRAIN_YEARS,
     VAL_YEARS,
     TEST_YEARS,
