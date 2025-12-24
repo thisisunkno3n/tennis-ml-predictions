@@ -100,8 +100,7 @@ GOSS (gradient-based one-side sampling) is already calculated
     - better for binary classficiation
 
 - next time try to have complete baseline model and modify hyperparameters on a different cell
-
-
+- also try using weighted parameters next time (for feature importance)
 
 
 Desired model outcome: 
