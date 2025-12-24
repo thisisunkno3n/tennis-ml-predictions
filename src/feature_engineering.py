@@ -146,7 +146,7 @@ def _encode_round(df: pd.DataFrame) -> pd.DataFrame:
         'R128': 7, 'R64': 6, 'R32': 5, 'R16': 4, 
         'QF': 3, 'SF': 2, 'F': 1, 'RR': 0
     }
-    df['rounds_remaining'] = df['round'].map(round_to_remaining).fillna(0)
+    df['rounds_remaining'] = df['round'].map(round_to_remaining).fillna(0).astype(int)
     df = df.drop(columns=['round'])
     return df
 

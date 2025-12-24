@@ -55,5 +55,14 @@ Feature engineering:
 
 - Time-based train/val/test split: split by year (2013-2019 train, 2020-2021 val, 2022-2024 test) to ensure temporal generalization. Year is used for splitting but not as a model feature.
 
+Exploratory Data Analysis:
+- load & basic info
+- target variable analysis: should be 50/50 split
+- missing values check
+- feature distributions (key features only)
+- verify train/val/test split validation are all 50/50 across splits
+- confirm time-based split (train years < val years < test years)
+- data leakeage check (verify identity columns removed)
+
 
 Desired model outcome: percentage in the form of a decimal, where 1.0 means the player will win 100%
