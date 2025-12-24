@@ -149,13 +149,19 @@ def _encode_round(df: pd.DataFrame) -> pd.DataFrame:
     df['rounds_remaining'] = df['round'].map(round_to_remaining).fillna(0).astype(int)
     df = df.drop(columns=['round'])
     return df
-
+    
 def _one_hot_encode(df: pd.DataFrame) -> pd.DataFrame:
     
     categorical_cols = ["surface", "tourney_level"]
     for col in categorical_cols:
         if col in df.columns:
-            dummies = pd.get_dummies(df[col], prefix=col, drop_first=True)
+            # Create all dummy variables first
+            dummies = pd.get_dummies(df[col], prefix=col, drop_first=False)
+            
+            # For surface, drop Hard (most common) as baseline instead of first category
+            if col == "surface" and f"{col}_Hard" in dummies.columns:
+                dummies = dummies.drop(columns=[f"{col}_Hard"])
+            
             df = pd.concat([df, dummies], axis=1)
             df = df.drop(columns=[col])  # Drop original categorical column
     

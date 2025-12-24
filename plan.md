@@ -64,5 +64,47 @@ Exploratory Data Analysis:
 - confirm time-based split (train years < val years < test years)
 - data leakeage check (verify identity columns removed)
 
+Model Training
+- Use a boosting model
+- LightGBM > XGBoost bc it's faster (lower accurarcy though). Will use XGBoost if I use GPU
 
-Desired model outcome: percentage in the form of a decimal, where 1.0 means the player will win 100%
+Validating Model:
+First 10 binary predictions: [0 1 1 0 1 0 0 1 1 0]
+First 10 probabilities: [0.43619152 0.53319805 0.60352292 0.36149893 0.63269947 0.33141845
+ 0.43724568 0.58860748 0.80917888 0.13962837]
+
+Prediction #	Binary	Probability	Meaning
+1	0	0.436	The "player" in row 1 is predicted to lose (43.6% win chance)
+2	1	0.533	The "player" in row 2 is predicted to win (53.3% win chance)
+-> these should add up to ~100% win chance
+-> symmetric relationships
+
+3	1	0.604	The "player" in row 3 is predicted to win (60.4% win chance)
+4	0	0.362	The "player" in row 4 is predicted to lose (36.2% win chance)
+5	1	0.633	The "player" in row 5 is predicted to win (63.3% win chance)
+
+GOSS (gradient-based one-side sampling) is already calculated
+
+- initial accurary on validation dataset: 63.89% 
+- 64.11% by changing to learning rate = 0.05 and n_estimator = 200
+- slightly overfits
+- changed baseline court to Hard instead of Clay as there's more data and clay & grass will adjust based on it
+    - accuray became 64.15%
+- feature importance: difference features dominator the top 6 for importance. 
+
+- AUC-ROC: "Area Under the ROC Curve"
+    - how well the model can separate between wins and losses
+- AUC-ROC vs Accuracy:
+    - Accuracy goes off from certain threshold (i.e. 0.5): "what % did we get right"
+    - AUC-ROC uses all possible thresholds: how well can we rank predictions
+    - better for binary classficiation
+
+- next time try to have complete baseline model and modify hyperparameters on a different cell
+
+
+
+
+Desired model outcome: 
+- percentage in the form of a decimal, where 1.0 means the player will win 100%
+- accurary rate in %
+ 
