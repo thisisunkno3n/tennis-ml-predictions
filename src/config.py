@@ -7,6 +7,6 @@ CLEAN_MATCHES_FILENAME = "matches_clean.csv"
 
 PLAYER_VIEW_FILENAME = "matches_player_view.csv"
 
-TRAIN_YEARS = range(2013, 2020)
-VAL_YEARS = range(2020, 2022)
-TEST_YEARS = range(2022, 2025)
+TRAIN_YEARS = range(2013, 2020)  # 2013-2019
+VAL_YEARS = range(2020, 2022)    # 2020-2021
+TEST_YEARS = range(2022, 2025)   # 2022-2024
