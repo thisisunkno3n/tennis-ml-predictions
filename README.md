@@ -71,7 +71,11 @@ Key insights from feature distribution analysis:
 
 The distributions show that difference features (rank_diff, age_diff) are normally distributed, while absolute features (player_rank, player_age) are right-skewed, which is expected for ranking and age data.
 
-**Visualizations**: The EDA notebook (`notebooks/01_eda.ipynb`) contains histogram visualizations comparing feature distributions across train/val/test splits for `rank_diff`, `age_diff`, `player_rank`, and `player_age`. These visualizations confirm consistent distributions across splits and validate the temporal splitting approach.
+**Feature Distribution Visualization**:
+
+![Feature Distributions](images/feature_distributions.png)
+
+*Figure 1: Histogram comparison of key features (`rank_diff`, `age_diff`, `player_rank`, `player_age`) across train/val/test splits. The visualizations confirm consistent distributions across splits and validate the temporal splitting approach. Outliers are annotated with counts and percentages.*
 
 ### Temporal Trends
 
@@ -107,7 +111,7 @@ Visualizations comparing feature distributions across train/val/test splits conf
 - No significant distribution shifts that would indicate data leakage or improper splitting
 - Outliers are present but tree-based models are robust to them
 
-**Visualizations**: See `notebooks/01_eda.ipynb` for detailed histogram comparisons showing the distribution of key features (`rank_diff`, `age_diff`, `player_rank`, `player_age`) across all three data splits. The visualizations use 1st-99th percentile limits to focus on the main distribution while annotating outlier counts.
+The feature distribution visualization (shown above in Figure 1) uses 1st-99th percentile limits to focus on the main distribution while annotating outlier counts.
 
 ## Feature Engineering
 
@@ -286,7 +290,11 @@ The top 10 most important features are:
 
 This feature importance ranking validates the feature engineering approach, showing that creating difference features was the right strategy.
 
-**Visualization**: The model training notebook (`notebooks/02_first_model.ipynb`) contains a horizontal bar chart visualization showing the top 15 most important features, clearly illustrating the dominance of difference-based features in the model's decision-making process.
+**Feature Importance Visualization**:
+
+![Feature Importance](images/feature_importance.png)
+
+*Figure 2: Top 15 most important features ranked by importance score. The visualization clearly illustrates the dominance of difference-based features (rank_points_diff, rank_diff, age_diff, height_diff) in the model's decision-making process.*
 
 ## Key Findings
 
@@ -345,6 +353,9 @@ tennis-ml-predictions/
 ├── data/
 │   ├── raw/              # Raw ATP match data (2013-2024)
 │   └── processed/        # Processed datasets (train.csv, val.csv, test.csv)
+├── images/               # Visualization images for README
+│   ├── feature_distributions.png
+│   └── feature_importance.png
 ├── notebooks/
 │   ├── 01_eda.ipynb      # Exploratory Data Analysis
 │   └── 02_first_model.ipynb  # Model training and evaluation
@@ -393,6 +404,22 @@ Key dependencies include:
 See `requirements.txt` for the complete list.
 
 ---
+
+## Generating Visualizations
+
+To generate the visualization images referenced in this README:
+
+1. **Feature Distribution Plot**: Run the visualization cell in `notebooks/01_eda.ipynb` (Cell 19) and save the figure:
+   ```python
+   plt.savefig('images/feature_distributions.png', dpi=300, bbox_inches='tight')
+   ```
+
+2. **Feature Importance Plot**: Run the visualization cell in `notebooks/02_first_model.ipynb` (Cell 29) and save the figure:
+   ```python
+   plt.savefig('images/feature_importance.png', dpi=300, bbox_inches='tight')
+   ```
+
+Alternatively, you can export the plots directly from the notebook outputs and save them to the `images/` directory.
 
 ## Future Improvements
 
